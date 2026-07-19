@@ -1,0 +1,76 @@
+<html><head><meta charset="utf-8"><title>cloud-itonami-isic-2640 &middot; consumer-electronics plant operations</title><style>
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.ok { color: #137a3f; }
+body { font-family: system-ui,-apple-system,sans-serif; margin: 0; color: #1a1a1a; background: #fafafa; }
+header.bar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; background: #fff; border-bottom: 1px solid #e5e5e5; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #f0f0f0; }
+h2 { margin-top: 0; font-size: 15px; }
+.warn { color: #b25c00; background: #fff8e1; padding: 2px 6px; border-radius: 4px; }
+main { max-width: 980px; margin: 24px auto; padding: 0 20px; }
+header.bar h1 { font-size: 18px; margin: 0; font-weight: 600; }
+.muted { color: #888; font-size: 13px; }
+.critical { color: #fff; background: #b3261e; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.card { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.err { color: #b3261e; background: #fbe9e7; padding: 2px 6px; border-radius: 4px; }
+th { font-weight: 600; color: #555; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+header.bar .badge { margin-left: auto; font-size: 12px; color: #666; }
+code { font-size: 12px; background: #f4f4f4; padding: 1px 4px; border-radius: 3px; }
+</style></head><body>
+<header class="bar">
+  <h1>Consumer-electronics plant operations (ISIC 2640) — Operator Console</h1>
+  <span class="badge">read-only sample &middot; governor-gated &middot; equipment actuation and safety-certification issuance never performed</span>
+</header>
+<main>
+  <section class="card">
+    <h2>Production batches</h2>
+    <p class="muted">Demo snapshot — build-time-generated from <code>consumerelec.store</code> via <code>consumerelec.render-html</code> (<code>clojure -M:dev:render-html</code>), regenerated nightly.</p>
+    <table>
+      <thead><tr><th>Batch</th><th>Product type</th><th>Model</th><th>Quantity (units)</th><th>Shipped (units)</th><th>Defect rate</th><th>Status</th><th>Last op status</th></tr></thead>
+      <tbody>
+        <tr><td>batch-001</td><td>television</td><td>TV-55-4K</td><td>500.0</td><td>150.0</td><td>0.8%</td><td><span class="ok">verified &amp; registered</span></td><td><span class="ok">committed</span></td></tr>
+        <tr><td>batch-002</td><td>smart-speaker</td><td>SPK-100</td><td>200.0</td><td>180.0</td><td>0.5%</td><td><span class="ok">verified &amp; registered</span></td><td><span class="muted">no activity</span></td></tr>
+        <tr><td>batch-003</td><td>wearable-device</td><td>WRB-20</td><td>3000.0</td><td>0.0</td><td>1.5%</td><td><span class="critical">unverified/unregistered</span></td><td><span class="muted">no activity</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>SMT/assembly/test-bench equipment</h2>
+    <table>
+      <thead><tr><th>Equipment</th><th>Kind</th><th>Status</th><th>Last op status</th></tr></thead>
+      <tbody>
+        <tr><td>final-test-002</td><td>final-assembly-test-bench</td><td><span class="critical">unverified/unregistered</span></td><td><span class="muted">no activity</span></td></tr>
+        <tr><td>smt-001</td><td>smt-placement-line</td><td><span class="ok">verified &amp; registered</span></td><td><span class="muted">no activity</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Action gate (Consumer Electronics Plant Operations Governor)</h2>
+    <p class="muted">HARD holds cannot be overridden. Equipment/batch verified/registered status and shipment quantity are independently recomputed, never trusted from the proposal.</p>
+    <table>
+      <thead><tr><th>Op</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr><td><code>:log-production-batch</code></td><td><span class="ok">auto-commit when clean, phase 3, no physical/financial risk</span></td></tr>
+        <tr><td><code>:schedule-maintenance</code></td><td><span class="warn">ALWAYS human approval &middot; never auto-eligible at any phase &middot; equipment verified/registered independently re-checked &middot; actuate-equipment? permanently blocked</span></td></tr>
+        <tr><td><code>:flag-safety-concern</code></td><td><span class="warn">ALWAYS human approval &middot; high-stakes gate, never auto-commits regardless of confidence</span></td></tr>
+        <tr><td><code>:coordinate-shipment</code></td><td><span class="warn">ALWAYS human approval &middot; batch verified/registered independently re-checked &middot; shipped+claimed quantity independently recomputed against logged production quantity</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+  <section class="card">
+    <h2>Audit ledger (this run)</h2>
+    <p class="muted">Append-only decision-fact log — every proposal, hold and commit this scenario produced.</p>
+    <table>
+      <thead><tr><th>Fact</th><th>Op</th><th>Subject</th><th>Basis</th></tr></thead>
+      <tbody>
+        <tr><td>committed</td><td><code>log-production-batch</code></td><td>batch-001</td><td>product-type, last-assessed</td></tr>
+        <tr><td>committed</td><td><code>schedule-maintenance</code></td><td>mnt-1</td><td>smt-001</td></tr>
+        <tr><td>committed</td><td><code>flag-safety-concern</code></td><td>concern-1</td><td>smt-001</td></tr>
+        <tr><td>committed</td><td><code>coordinate-shipment</code></td><td>ship-1</td><td>batch-001</td></tr>
+        <tr><td>governor-hold</td><td><code>schedule-maintenance</code></td><td>mnt-2</td><td>equipment-not-verified</td></tr>
+        <tr><td>governor-hold</td><td><code>coordinate-shipment</code></td><td>ship-2</td><td>batch-not-verified</td></tr>
+        <tr><td>governor-hold</td><td><code>coordinate-shipment</code></td><td>ship-3</td><td>shipment-quantity-exceeded</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body></html>
