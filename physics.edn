@@ -1,0 +1,32 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:dev:physics` runs it.
+;;
+;; README: the consumer-electronics plant places components on PCBs by SMT,
+;; reflow-solders them, assembles the finished unit and tests it. The robots'
+;; physical work: running a board through the reflow oven's peak zone (the
+;; conveyor dwell decides whether the solder joint forms), and placing the
+;; finished unit into the functional / dielectric test fixture.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isic-2640"
+ :cases
+ [{:id :reflow-peak-dwell
+   :kind :thermal
+   :procedure "a 1.6 mm FR-4 board rides the reflow conveyor through the 250 C peak zone, then into the 120 C cooling zone; the board mid-plane must pass solder liquidus (half board, insulated mid-plane)"
+   :params {:thickness-m 0.0008 :conductivity-w-mk 0.3 :density-kg-m3 1850.0 :specific-heat-j-kgk 1100.0
+            :t0-c 150.0 :t-hot-c 250.0 :h-front-w-m2k 80.0 :h-back-w-m2k 0.0
+            :t-cool-c 120.0 :threshold-c 232.0 :duration-s 240.0 :nodes 7}
+   :sweep {:param :heating-s :values [20.0 30.0 45.0 60.0 90.0]}
+   :quantity :peak-back-c
+   :limit {:min 232.0 :basis "estimate: SAC305 liquidus 217 C plus a ~15 C wetting margin; board entering the peak zone from a 150 C soak and the zone's h of 80 W/m2K are also estimates"}
+   :boundary {:lo 10.0 :hi 120.0}}
+  {:id :unit-into-test-fixture
+   :kind :manipulator
+   :procedure "arm lifts a finished unit (smart speaker / AV device) from the assembly conveyor into the functional-test fixture"
+   :params {:l1-m 0.45 :l2-m 0.40 :m1-kg 4.0 :m2-kg 2.5
+            :from [0.55 0.00] :to [0.15 0.50] :duration-s 1.5 :steps 400}
+   :sweep {:param :payload-kg :values [0.3 0.8 1.5 3.0 5.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 50.0 :basis "estimate: continuous shoulder torque of a ~5 kg-class collaborative arm"}
+   :boundary {:lo 0.1 :hi 30.0}}]}
